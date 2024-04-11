@@ -7,6 +7,8 @@
 [![Conda-Forge][conda-badge]][conda-link]
 [![PyPI platforms][pypi-platforms]][pypi-link]
 
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/uw-ssec/genetic-forensic-portal/main.svg)](https://results.pre-commit.ci/latest/github/uw-ssec/genetic-forensic-portal/main)
+
 [![GitHub Discussion][github-discussions-badge]][github-discussions-link]
 
 <!-- SPHINX-START -->
@@ -18,9 +20,6 @@
 [conda-link]:               https://github.com/conda-forge/genetic-forensic-portal-feedstock
 [github-discussions-badge]: https://img.shields.io/static/v1?label=Discussions&message=Ask&color=blue&logo=github
 [github-discussions-link]:  https://github.com/uw-ssec/genetic-forensic-portal/discussions
-[pypi-link]:                https://pypi.org/project/genetic-forensic-portal/
-[pypi-platforms]:           https://img.shields.io/pypi/pyversions/genetic-forensic-portal
-[pypi-version]:             https://img.shields.io/pypi/v/genetic-forensic-portal
 [rtd-badge]:                https://readthedocs.org/projects/genetic-forensic-portal/badge/?version=latest
 [rtd-link]:                 https://genetic-forensic-portal.readthedocs.io/en/latest/?badge=latest
 
