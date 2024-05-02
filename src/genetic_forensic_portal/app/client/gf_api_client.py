@@ -18,6 +18,10 @@ SAMPLE_IMAGE_PATH = (
 SCAT_SAMPLE_IMAGE = str(SAMPLE_IMAGE_PATH / "tan001_scat.png")
 SCAT_SAMPLE_IMAGE_2 = str(SAMPLE_IMAGE_PATH / "tan002_scat.png")
 
+# Add Voronoi sample image paths
+VORONOI_SAMPLE_IMAGE = str(SAMPLE_IMAGE_PATH / "tan001_voronoi.png")
+VORONOI_SAMPLE_IMAGE_2 = str(SAMPLE_IMAGE_PATH / "tan002_voronoi.png")
+
 
 def upload_sample_analysis(data: bytes, metadata: str | None = None) -> str:
     """Uploads a sample analysis from the web portal to the API
@@ -56,6 +60,28 @@ def get_scat_analysis(sample_id: str) -> str:
         analysis = SCAT_SAMPLE_IMAGE
     elif sample_id == NO_METADATA_UUID:
         analysis = SCAT_SAMPLE_IMAGE_2
+
+    if analysis is None:
+        raise FileNotFoundError
+
+    return analysis
+
+
+def get_voronoi_analysis(sample_id: str) -> str:
+    """Gets the Voronoi analysis for a sample
+
+    Args:
+        sample_id (str): The sample ID to get the Voronoi analysis for"""
+
+    if sample_id is None:
+        raise ValueError(MISSING_UUID_ERROR)
+
+    analysis = None
+
+    if sample_id == SAMPLE_UUID:
+        analysis = VORONOI_SAMPLE_IMAGE
+    elif sample_id == NO_METADATA_UUID:
+        analysis = VORONOI_SAMPLE_IMAGE_2
 
     if analysis is None:
         raise FileNotFoundError

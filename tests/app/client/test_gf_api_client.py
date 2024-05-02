@@ -25,6 +25,9 @@ def test_upload_no_metadata_returns_different_uuid():
     assert response == client.NO_METADATA_UUID
 
 
+# SCAT Analysis
+
+
 def test_get_scat_analysis_returns_image_path():
     response = client.get_scat_analysis(client.SAMPLE_UUID)
 
@@ -51,3 +54,28 @@ def test_list_completed_analyses_returns_list():
     response = client.list_completed_analyses()
 
     assert response == client.UUID_LIST
+
+
+# Voronoi Analysis
+
+
+def test_get_voronoi_analysis_returns_image_path():
+    response = client.get_voronoi_analysis(client.SAMPLE_UUID)
+
+    assert response == client.VORONOI_SAMPLE_IMAGE
+
+
+def test_get_voronoi_analysis_no_metadata_returns_different_image_path():
+    response = client.get_voronoi_analysis(client.NO_METADATA_UUID)
+
+    assert response == client.VORONOI_SAMPLE_IMAGE_2
+
+
+def test_get_voronoi_analysis_raises_error():
+    with pytest.raises(FileNotFoundError):
+        client.get_voronoi_analysis("not-an-uuid")
+
+
+def test_get_voronoi_analysis_raises_error_for_none():
+    with pytest.raises(ValueError, match=client.MISSING_UUID_ERROR):
+        client.get_voronoi_analysis(None)  # type: ignore[arg-type]
