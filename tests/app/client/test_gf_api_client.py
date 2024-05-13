@@ -4,6 +4,7 @@ import pandas as pd
 import pytest
 
 import genetic_forensic_portal.app.client.gf_api_client as client
+from genetic_forensic_portal.utils.analysis_status import AnalysisStatus
 
 TEST_FILE_DATA = b"this is a file"
 TEST_METADATA = "this is metadata"
@@ -35,6 +36,12 @@ def test_get_scat_analysis_returns_image_path():
     assert response == client.SCAT_SAMPLE_IMAGE
 
 
+def test_get_scat_analysis_returns_image_path_in_progress_uiud():
+    response = client.get_scat_analysis(client.IN_PROGRESS_UUID)
+
+    assert response == client.SCAT_SAMPLE_IMAGE
+
+
 def test_get_scat_analysis_no_metadata_returns_different_image_path():
     response = client.get_scat_analysis(client.NO_METADATA_UUID)
 
@@ -51,8 +58,8 @@ def test_get_scat_analysis_raises_error_for_none():
         client.get_scat_analysis(None)  # type: ignore[arg-type]
 
 
-def test_list_completed_analyses_returns_list():
-    response = client.list_completed_analyses()
+def test_list_analyses_returns_list():
+    response = client.list_analyses()
 
     assert response == client.UUID_LIST
 
@@ -80,6 +87,32 @@ def test_get_voronoi_analysis_raises_error():
 def test_get_voronoi_analysis_raises_error_for_none():
     with pytest.raises(ValueError, match=client.MISSING_UUID_ERROR):
         client.get_voronoi_analysis(None)  # type: ignore[arg-type]
+
+
+# Tests for the get_analysis_status function
+def test_get_analysis_status_succeeded():
+    response = client.get_analysis_status(client.SAMPLE_UUID)
+    assert response == AnalysisStatus.ANALYSIS_SUCCEEDED.value
+
+
+def test_get_analysis_status_in_progress():
+    response = client.get_analysis_status(client.IN_PROGRESS_UUID)
+    assert response == AnalysisStatus.ANALYSIS_IN_PROGRESS.value
+
+
+def test_get_analysis_status_failed():
+    response = client.get_analysis_status(client.ANALYSIS_FAILED_UUID)
+    assert response == AnalysisStatus.ANALYSIS_FAILED.value
+
+
+def test_get_analysis_status_not_found():
+    with pytest.raises(FileNotFoundError):
+        client.get_analysis_status("unknown-uuid")
+
+
+def test_get_analysis_status_no_uuid_provided():
+    with pytest.raises(ValueError, match=client.MISSING_UUID_ERROR):
+        client.get_analysis_status(None)  # type: ignore[arg-type]
 
 
 # Familial Analysis

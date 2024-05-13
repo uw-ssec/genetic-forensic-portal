@@ -9,7 +9,7 @@ st.header("Get Familial Analysis")
 
 uuid = st.selectbox(
     "Select a sample ID",
-    client.list_completed_analyses(),
+    client.list_analyses(),
     index=None,
     placeholder="Select sample ID...",
 )
