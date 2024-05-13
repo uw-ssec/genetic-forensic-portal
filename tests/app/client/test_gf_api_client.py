@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pandas as pd
 import pytest
 
 import genetic_forensic_portal.app.client.gf_api_client as client
@@ -79,3 +80,37 @@ def test_get_voronoi_analysis_raises_error():
 def test_get_voronoi_analysis_raises_error_for_none():
     with pytest.raises(ValueError, match=client.MISSING_UUID_ERROR):
         client.get_voronoi_analysis(None)  # type: ignore[arg-type]
+
+
+# Familial Analysis
+
+
+def test_get_familial_analysis_returns_image_path():
+    response = client.get_familial_analysis(client.SAMPLE_UUID)
+
+    pd.testing.assert_frame_equal(
+        response, pd.read_csv(client.FAMILIAL_SAMPLE_DATA, sep="\t", skiprows=1)
+    )
+
+
+def test_get_familial_analysis_no_metadata_returns_different_image_path():
+    response = client.get_familial_analysis(client.NO_METADATA_UUID)
+
+    pd.testing.assert_frame_equal(
+        response, pd.read_csv(client.FAMILIAL_SAMPLE_DATA_2, sep="\t", skiprows=1)
+    )
+
+
+def test_get_familial_analysis_raises_error():
+    with pytest.raises(FileNotFoundError):
+        client.get_familial_analysis("not-an-uuid")
+
+
+def test_get_familial_analysis_raises_error_for_none():
+    with pytest.raises(ValueError, match=client.MISSING_UUID_ERROR):
+        client.get_familial_analysis(None)  # type: ignore[arg-type]
+
+
+def test_get_familial_analysis_with_erroring_file_raises():
+    with pytest.raises(RuntimeError, match=client.FAMILIAL_TSV_ERROR):
+        client.get_familial_analysis(client.FAMILIAL_FILE_PARSE_ERROR_UUID)

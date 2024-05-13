@@ -65,6 +65,12 @@ Unit tests:
 pytest ./tests
 ```
 
+Unit tests with coverage:
+
+```bash
+pytest --cov=genetic_forensic_portal tests/ --cov-report xml:coverage.xml
+```
+
 ## Pull Requests
 
 Please follow the below guidelines when you want to raise a Pull Request:
