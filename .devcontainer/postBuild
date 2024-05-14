@@ -1,0 +1,12 @@
+#/bin/bash -l
+
+# Install genetic portal package if pyproject.toml exists
+TARGET_FILE="${HOME}/pyproject.toml"
+
+if [ -f "$TARGET_FILE" ]
+then
+    echo "$TARGET_FILE exists. Installing package."
+    pip install "${HOME}"
+else
+    echo "$TARGET_FILE does not exist. Skipping install."
+fi
