@@ -58,10 +58,46 @@ def test_get_scat_analysis_raises_error_for_none():
         client.get_scat_analysis(None)  # type: ignore[arg-type]
 
 
-def test_list_analyses_returns_list():
-    response = client.list_analyses()
+def test_list_all_analyses_returns_list():
+    response = client.list_all_analyses()
 
     assert response == client.UUID_LIST
+
+
+def test_list_analyses_returns_response_object():
+    response = client.list_analyses()
+
+    assert response.analyses == client.UUID_LIST[: client.DEFAULT_LIST_PAGE_SIZE]
+    assert response.start_token == 0
+    assert response.next_token == client.DEFAULT_LIST_PAGE_SIZE
+
+
+def test_list_analyses_with_start_returns_correct_page():
+    response = client.list_analyses(client.DEFAULT_LIST_PAGE_SIZE)
+
+    assert response.analyses == client.UUID_LIST[client.DEFAULT_LIST_PAGE_SIZE :]
+    assert response.start_token == client.DEFAULT_LIST_PAGE_SIZE
+    assert response.next_token is None
+
+
+def test_list_analyses_with_early_returns_page_with_correct_size():
+    start_token = 1
+    response = client.list_analyses(start_token)
+
+    expected_end = start_token + client.DEFAULT_LIST_PAGE_SIZE
+
+    assert response.analyses == client.UUID_LIST[start_token:expected_end]
+    assert len(response.analyses) == client.DEFAULT_LIST_PAGE_SIZE
+    assert response.start_token == start_token
+    assert response.next_token == expected_end
+
+
+def test_list_analyses_with_out_of_bounds_start_returns_empty_list():
+    response = client.list_analyses(100)
+
+    assert response.analyses == []
+    assert response.start_token == 0
+    assert response.next_token is None
 
 
 # Voronoi Analysis
@@ -92,17 +128,17 @@ def test_get_voronoi_analysis_raises_error_for_none():
 # Tests for the get_analysis_status function
 def test_get_analysis_status_succeeded():
     response = client.get_analysis_status(client.SAMPLE_UUID)
-    assert response == AnalysisStatus.ANALYSIS_SUCCEEDED.value
+    assert response == AnalysisStatus.ANALYSIS_SUCCEEDED
 
 
 def test_get_analysis_status_in_progress():
     response = client.get_analysis_status(client.IN_PROGRESS_UUID)
-    assert response == AnalysisStatus.ANALYSIS_IN_PROGRESS.value
+    assert response == AnalysisStatus.ANALYSIS_IN_PROGRESS
 
 
 def test_get_analysis_status_failed():
     response = client.get_analysis_status(client.ANALYSIS_FAILED_UUID)
-    assert response == AnalysisStatus.ANALYSIS_FAILED.value
+    assert response == AnalysisStatus.ANALYSIS_FAILED
 
 
 def test_get_analysis_status_not_found():

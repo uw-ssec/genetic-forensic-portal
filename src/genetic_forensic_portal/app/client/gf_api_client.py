@@ -7,6 +7,8 @@ import pandas as pd
 
 from genetic_forensic_portal.utils.analysis_status import AnalysisStatus
 
+from .models.list_analyses_response import ListAnalysesResponse
+
 logger = logging.getLogger(__name__)
 
 
@@ -50,6 +52,9 @@ FAMILIAL_SAMPLE_DATA_2 = str(SAMPLE_DATA_PATH / "sample_familial_matches1.tsv")
 FAMILIAL_SAMPLE_DATA_ERRORS = str(
     SAMPLE_DATA_PATH / "sample_familial_matches_errors.tsv"
 )
+
+# Arbitrarily chosen to demonstrate pagination
+DEFAULT_LIST_PAGE_SIZE = 5
 
 
 def upload_sample_analysis(data: bytes, metadata: str | None = None) -> str:
@@ -150,18 +155,50 @@ def get_familial_analysis(sample_id: str) -> pd.DataFrame:
         raise RuntimeError(FAMILIAL_TSV_ERROR) from None
 
 
-def list_analyses() -> list[str]:
+def list_analyses(next_token: int = 0) -> ListAnalysesResponse:
     """Lists UUIDs for all SCAT analyses
 
     Returns:
-        list[str]: A list of all SCAT analyses"""
+        ListAnalysesResponse: A list of all SCAT analyses with indications of pagination"""
     # This is a placeholder. Eventually, the real API call will be here
     # and we can return its response
 
-    return UUID_LIST
+    # check for out of bounds
+    if next_token >= len(UUID_LIST):
+        return ListAnalysesResponse([])
+
+    # set reasonable bounds for the page
+    new_start_token = max(next_token, 0)
+    new_end_token = min(next_token + DEFAULT_LIST_PAGE_SIZE, len(UUID_LIST))
+    new_next_token = new_end_token if new_end_token < len(UUID_LIST) else None
+
+    return ListAnalysesResponse(
+        UUID_LIST[new_start_token:new_end_token],
+        start_token=new_start_token,
+        next_token=new_next_token,
+    )
 
 
-def get_analysis_status(sample_id: str) -> str:
+def list_all_analyses() -> list[str]:
+    """Lists UUIDs for all analyses
+
+    Returns:
+        list[str]: A list of all analyses"""
+    # This is a placeholder. Eventually, the real API call will be here
+    # and we can return its response
+    analyses = []
+
+    retrieved_analyses = list_analyses()
+
+    while retrieved_analyses.next_token is not None:
+        analyses.extend(retrieved_analyses.analyses)
+        retrieved_analyses = list_analyses(retrieved_analyses.next_token)
+
+    analyses.extend(retrieved_analyses.analyses)
+    return analyses
+
+
+def get_analysis_status(sample_id: str) -> AnalysisStatus:
     """
     Retrieves the status of the analysis based on the given UUID.
 
@@ -176,11 +213,11 @@ def get_analysis_status(sample_id: str) -> str:
         raise ValueError(MISSING_UUID_ERROR)
 
     if sample_id in [SAMPLE_UUID, NO_METADATA_UUID]:
-        return AnalysisStatus.ANALYSIS_SUCCEEDED.value
+        return AnalysisStatus.ANALYSIS_SUCCEEDED
     if sample_id == IN_PROGRESS_UUID:
-        return AnalysisStatus.ANALYSIS_IN_PROGRESS.value
+        return AnalysisStatus.ANALYSIS_IN_PROGRESS
     if sample_id == ANALYSIS_FAILED_UUID:
-        return AnalysisStatus.ANALYSIS_FAILED.value
+        return AnalysisStatus.ANALYSIS_FAILED
 
     error_message = "No analysis found for the given UUID"
     raise FileNotFoundError(error_message)

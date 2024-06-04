@@ -8,14 +8,14 @@ st.title("Get Analysis Status")
 
 uuid = st.selectbox(
     "Select a sample ID",
-    client.list_analyses(),
+    client.list_all_analyses(),
     index=None,
     placeholder="Select sample ID...",
 )
 
 if uuid:
     try:
-        status = client.get_analysis_status(uuid)
+        status = client.get_analysis_status(uuid).value
         st.success(f"Current status of the analysis: {status}")
     except ValueError as ve:
         st.error(f"Invalid input: {ve}")

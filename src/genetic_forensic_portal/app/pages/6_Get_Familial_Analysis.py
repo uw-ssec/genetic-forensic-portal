@@ -7,10 +7,14 @@ from genetic_forensic_portal.app.client import gf_api_client as client
 
 st.header("Get Familial Analysis")
 
+uuid = getattr(st.session_state, "uuid", None)
+
+analysis_list = client.list_all_analyses()
+
 uuid = st.selectbox(
     "Select a sample ID",
-    client.list_analyses(),
-    index=None,
+    analysis_list,
+    index=getattr(st.session_state, "index", None),
     placeholder="Select sample ID...",
 )
 
