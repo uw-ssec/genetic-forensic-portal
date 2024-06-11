@@ -22,11 +22,11 @@ if uuid:
     try:
         analysis = client.get_familial_analysis(uuid)
         st.dataframe(
-            analysis.style.map(
-                fam_utils.highlight_exact_matches, subset=fam_utils.EXACT_MATCH_COLUMN
+            analysis.style.applymap(
+                fam_utils.highlight_exact_matches, subset=[fam_utils.EXACT_MATCH_COLUMN]
             )
         )
     except FileNotFoundError:
         st.error("Analysis not found")
     except Exception as e:
-        st.error(e)
+        st.error(str(e))
