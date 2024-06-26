@@ -13,7 +13,10 @@
       ]
     }
   },
-  "postCreateCommand": {
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {}
+  },
+  "onCreateCommand": {
     "install_package": "pip install -e '${containerWorkspaceFolder}[all]'"
   }
 }

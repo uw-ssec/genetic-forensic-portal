@@ -1,0 +1,3 @@
+ignore:
+  - "src/genetic_forensic_portal/auth.py"
+  - "src/genetic_forensic_portal/cli.py"
