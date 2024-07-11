@@ -46,3 +46,17 @@ def test_logout_error_throws():
         with pytest.raises(KeycloakPostError):
             keycloak_client.logout_user({"refresh_token": "test"})
         assert mock_keycloak_openid.logout.call_count == 1
+
+
+def test_get_user_roles_successful():
+    with mock.patch(
+        "genetic_forensic_portal.app.client.keycloak_client.keycloak_openid"
+    ) as mock_keycloak_openid:
+        mock_keycloak_openid.introspect.return_value = {
+            "realm_access": {"roles": ["role1", "role2"]}
+        }
+        assert keycloak_client.get_user_roles({"access_token": "access_token"}) == [
+            "role1",
+            "role2",
+        ]
+        assert mock_keycloak_openid.introspect.call_count == 1

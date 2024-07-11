@@ -2,12 +2,90 @@
   "realm": "gf-portal",
   "users": [
     {
+      "id": "d2998d73-b1ff-4560-ae17-fcfd4cdb8093",
+      "username": "cefs-mary",
+      "firstName": "test",
+      "lastName": "test",
+      "email": "cefs-mary@example.com",
+      "emailVerified": true,
+      "createdTimestamp": 1719353657800,
+      "enabled": true,
+      "totp": false,
+      "credentials": [
+        {
+          "id": "4369d80b-41ce-4bd6-9db6-8879b5534a5a",
+          "type": "password",
+          "userLabel": "My password",
+          "createdDate": 1719353700761,
+          "secretData": "{\"value\":\"eK1PdxpqvfxWlY68OG7VTaVUIRm6G8pH41gH0VwIu8k=\",\"salt\":\"BJK00dQlXfyXAkAPDk7i/Q==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": ["default-roles-gf-portal", "cefs"],
+      "notBefore": 0,
+      "groups": ["/cefs"]
+    },
+    {
+      "id": "1dc3c93b-3e0f-453b-9fc2-5ecee407ba99",
+      "username": "cefs-ryan",
+      "firstName": "test",
+      "lastName": "test",
+      "email": "cefs-ryan@example.com",
+      "emailVerified": true,
+      "createdTimestamp": 1719353559450,
+      "enabled": true,
+      "totp": false,
+      "credentials": [
+        {
+          "id": "1fbc217b-1c6b-40f8-b89e-0c253d1a2d73",
+          "type": "password",
+          "userLabel": "My password",
+          "createdDate": 1719353580609,
+          "secretData": "{\"value\":\"WzRNRDKUwXcsLHjIsJYzIbH7y/rft8WBo9RB05S79rE=\",\"salt\":\"R1byUIubQQQVBsxGwWKtqQ==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": ["default-roles-gf-portal", "cefs"],
+      "notBefore": 0,
+      "groups": ["/cefs"]
+    },
+    {
+      "id": "e5e56a99-ffb3-4ef1-9a37-af7a1df36091",
+      "username": "gf-admin",
+      "firstName": "test",
+      "lastName": "test",
+      "email": "gf-admin@example.com",
+      "emailVerified": true,
+      "createdTimestamp": 1719353506918,
+      "enabled": true,
+      "totp": false,
+      "credentials": [
+        {
+          "id": "478d6c0e-8980-40de-b878-9a3bafb427de",
+          "type": "password",
+          "userLabel": "My password",
+          "createdDate": 1719353531750,
+          "secretData": "{\"value\":\"XhS9wdpvpfwQPhrRnOe5/0LU6558ejnHNbiRl0EUQcU=\",\"salt\":\"zICWrPKrAUF7PCXz0mKN4g==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": ["default-roles-gf-portal"],
+      "notBefore": 0,
+      "groups": ["/admin"]
+    },
+    {
       "id": "58f32bab-273c-491a-ae10-0d5e4ff9ae63",
       "username": "noaccess",
       "firstName": "test",
       "lastName": "test",
       "email": "noaccess@example.com",
-      "emailVerified": false,
+      "emailVerified": true,
       "createdTimestamp": 1718215827521,
       "enabled": true,
       "totp": false,
@@ -26,6 +104,76 @@
       "realmRoles": ["default-roles-gf-portal"],
       "notBefore": 0,
       "groups": []
+    },
+    {
+      "id": "902c74ef-c38f-454e-8d8c-b235ac5b8284",
+      "username": "service-account-gf-portal-login",
+      "emailVerified": false,
+      "createdTimestamp": 1719432218636,
+      "enabled": true,
+      "totp": false,
+      "serviceAccountClientId": "gf-portal-login",
+      "credentials": [],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": ["default-roles-gf-portal"],
+      "clientRoles": {
+        "gf-portal-login": ["uma_protection"]
+      },
+      "notBefore": 0,
+      "groups": []
+    },
+    {
+      "id": "a28b1493-3475-4b40-8a02-5a1371aeaafe",
+      "username": "test-center-1",
+      "firstName": "test",
+      "lastName": "test",
+      "email": "test-center-1@example.com",
+      "emailVerified": true,
+      "createdTimestamp": 1719355395157,
+      "enabled": true,
+      "totp": false,
+      "credentials": [
+        {
+          "id": "37f5a440-b064-4ba1-bf79-2d338cf12d8c",
+          "type": "password",
+          "userLabel": "My password",
+          "createdDate": 1719355410641,
+          "secretData": "{\"value\":\"/YBnKKY3Y19BoaYufOBItC/L2kW1JxVl7bJgGsVnPoc=\",\"salt\":\"RT8tZhDOlh9yc9DeMyMz6Q==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": ["default-roles-gf-portal"],
+      "notBefore": 0,
+      "groups": ["/test-center"]
+    },
+    {
+      "id": "e119fdaf-9575-4dbe-ac54-085ee32085c0",
+      "username": "test-center-2",
+      "firstName": "test",
+      "lastName": "test",
+      "email": "test-center-2@example.com",
+      "emailVerified": true,
+      "createdTimestamp": 1719355434959,
+      "enabled": true,
+      "totp": false,
+      "credentials": [
+        {
+          "id": "8e9e3cc2-70ec-484d-b818-b9d8d555b52d",
+          "type": "password",
+          "userLabel": "My password",
+          "createdDate": 1719355450850,
+          "secretData": "{\"value\":\"OD2IWPYgSnnGNZT0nKpn5hSvEeDsPNFmtec8ZvCVoIs=\",\"salt\":\"qUSPpjEfaN/1ySY8Nefm2A==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": ["default-roles-gf-portal"],
+      "notBefore": 0,
+      "groups": ["/test-center"]
     },
     {
       "id": "4308d292-60db-4dc7-a388-fa3ac9ffdd88",

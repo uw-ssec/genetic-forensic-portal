@@ -4,29 +4,35 @@ import logging
 from pathlib import Path
 
 import pandas as pd
+import streamlit as st
 
 from genetic_forensic_portal.app.client.models.get_analyses_response import (
     GetAnalysesResponse,
 )
+from genetic_forensic_portal.app.common.constants import (
+    ANALYSIS_FAILED_UUID,
+    FAMILIAL_FILE_PARSE_ERROR_UUID,
+    IN_PROGRESS_UUID,
+    NO_METADATA_UUID,
+    NOT_AUTHORIZED_UUID,
+    NOT_FOUND_UUID,
+    ROLES,
+    SAMPLE_UUID,
+    USERNAME,
+)
 from genetic_forensic_portal.utils.analysis_status import AnalysisStatus
 
+from . import keycloak_client as auth_client
 from .models.list_analyses_response import ListAnalysesResponse
 
 logger = logging.getLogger(__name__)
 
 MISSING_DATA_ERROR = "data is required"
 MISSING_UUID_ERROR = "uuid is required"
+UPLOAD_DENIED_ERROR = "User does not have permission to upload sample analysis"
 FAMILIAL_TSV_ERROR = (
     "Error reading familial matching results. Please contact system administrator."
 )
-
-SAMPLE_UUID = "this-is-a-uuid"
-NO_METADATA_UUID = "this-is-a-differentuuid"
-NOT_FOUND_UUID = "not-found-uuid"
-NOT_AUTHORIZED_UUID = "not-authorized-uuid"
-IN_PROGRESS_UUID = "in-progress-uuid"
-ANALYSIS_FAILED_UUID = "failed-uuid"
-FAMILIAL_FILE_PARSE_ERROR_UUID = "familial-parse-error-uuid"
 
 UUID_LIST = [
     SAMPLE_UUID,
@@ -56,7 +62,7 @@ FAMILIAL_SAMPLE_DATA_ERRORS = str(
 )
 
 # Arbitrarily chosen to demonstrate pagination
-DEFAULT_LIST_PAGE_SIZE = 5
+DEFAULT_LIST_PAGE_SIZE = 3
 
 
 def upload_sample_analysis(data: bytes, metadata: str | None = None) -> str:
@@ -67,7 +73,6 @@ def upload_sample_analysis(data: bytes, metadata: str | None = None) -> str:
         metadata (str | None): The metadata to upload"""
     # This is a placeholder. Eventually, the real API call will be here
     # and we can return its response
-
     if data is None:
         raise ValueError(MISSING_DATA_ERROR)
 
@@ -75,6 +80,11 @@ def upload_sample_analysis(data: bytes, metadata: str | None = None) -> str:
 
     if metadata is None:
         sample_identifier = NO_METADATA_UUID
+
+    if not auth_client.check_create_access(
+        st.session_state[USERNAME], st.session_state[ROLES]
+    ):
+        raise PermissionError(UPLOAD_DENIED_ERROR)
 
     return sample_identifier
 
@@ -89,6 +99,11 @@ def get_scat_analysis(sample_id: str) -> str:
 
     if sample_id is None:
         raise ValueError(MISSING_UUID_ERROR)
+
+    if not auth_client.check_view_access(
+        st.session_state[USERNAME], st.session_state[ROLES], sample_id
+    ):
+        raise FileNotFoundError
 
     analysis = None
 
@@ -112,8 +127,14 @@ def get_voronoi_analysis(sample_id: str) -> str:
         sample_id (str): The sample ID to get the Voronoi analysis for"""
     # This is a placeholder. Eventually, the real API call will be here
     # and we can return its response
+
     if sample_id is None:
         raise ValueError(MISSING_UUID_ERROR)
+
+    if not auth_client.check_view_access(
+        st.session_state[USERNAME], st.session_state[ROLES], sample_id
+    ):
+        raise FileNotFoundError
 
     analysis = None
 
@@ -135,8 +156,14 @@ def get_familial_analysis(sample_id: str) -> pd.DataFrame:
         sample_id (str): The sample ID to get the familial analysis for"""
     # This is a placeholder. Eventually, the real API call will be here
     # and we can return its response
+
     if sample_id is None:
         raise ValueError(MISSING_UUID_ERROR)
+
+    if not auth_client.check_view_access(
+        st.session_state[USERNAME], st.session_state[ROLES], sample_id
+    ):
+        raise FileNotFoundError
 
     analysis_path = None
 
@@ -165,17 +192,32 @@ def list_analyses(next_token: int = 0) -> ListAnalysesResponse:
     # This is a placeholder. Eventually, the real API call will be here
     # and we can return its response
 
+    list_all_access = auth_client.check_list_all_access(
+        st.session_state[USERNAME], st.session_state[ROLES]
+    )
+
     # check for out of bounds
     if next_token >= len(UUID_LIST):
         return ListAnalysesResponse([])
 
     # set reasonable bounds for the page
     new_start_token = max(next_token, 0)
-    new_end_token = min(next_token + DEFAULT_LIST_PAGE_SIZE, len(UUID_LIST))
+
+    available_analyses: list[str] = []
+    index = new_start_token
+
+    while index < len(UUID_LIST) and len(available_analyses) < DEFAULT_LIST_PAGE_SIZE:
+        if list_all_access or auth_client.check_view_access(
+            st.session_state[USERNAME], st.session_state[ROLES], UUID_LIST[index]
+        ):
+            available_analyses.append(UUID_LIST[index])
+        index += 1
+
+    new_end_token = min(index, len(UUID_LIST))
     new_next_token = new_end_token if new_end_token < len(UUID_LIST) else None
 
     return ListAnalysesResponse(
-        UUID_LIST[new_start_token:new_end_token],
+        available_analyses,
         start_token=new_start_token,
         next_token=new_next_token,
     )
@@ -211,8 +253,15 @@ def get_analysis_status(sample_id: str) -> AnalysisStatus:
         str: The human-readable status of the analysis.
 
     """
+
     if sample_id is None:
         raise ValueError(MISSING_UUID_ERROR)
+
+    if not auth_client.check_view_access(
+        st.session_state[USERNAME], st.session_state[ROLES], sample_id
+    ):
+        error_message = "No analysis found for the given UUID"
+        raise FileNotFoundError
 
     if sample_id in [SAMPLE_UUID, NO_METADATA_UUID]:
         return AnalysisStatus.ANALYSIS_SUCCEEDED

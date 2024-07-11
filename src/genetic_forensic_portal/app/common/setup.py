@@ -24,6 +24,7 @@ def login_success(message: str, username: str, token: dict[Any, Any]) -> None:
     st.session_state[AUTHENTICATED] = True
     st.session_state[USERNAME] = username
     st.session_state[TOKEN] = token
+    st.session_state[ROLES] = keycloak_client.get_user_roles(token)
     st.rerun()
 
 
