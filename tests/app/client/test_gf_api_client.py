@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 from unittest import mock
 
 import pandas as pd
@@ -20,9 +21,12 @@ from genetic_forensic_portal.app.common.constants import (
     SAMPLE_UUID,
     USERNAME,
 )
+from genetic_forensic_portal.app.utils.validate_input_file import (
+    HEADER_MUST_START_WITH_MATCHID,
+)
 from genetic_forensic_portal.utils.analysis_status import AnalysisStatus
 
-TEST_FILE_DATA = b"this is a file"
+TEST_FILE_DATA = io.BytesIO(b"this is a file")
 TEST_METADATA = "this is metadata"
 
 MOCK_STREAMLIT = streamlit
@@ -42,20 +46,44 @@ UUIDS_WITH_ACCESS = [
 
 
 def test_upload_file_returns_uuid():
-    response = client.upload_sample_analysis(TEST_FILE_DATA, TEST_METADATA)
+    with mock.patch(
+        "genetic_forensic_portal.app.utils.validate_input_file.validate_input_file"
+    ):
+        response = client.upload_sample_analysis(TEST_FILE_DATA, TEST_METADATA)
 
-    assert response == client.SAMPLE_UUID
+        assert response == client.SAMPLE_UUID
 
 
 def test_upload_nothing_returns_error():
-    with pytest.raises(ValueError, match=client.MISSING_DATA_ERROR):
+    with (
+        mock.patch(
+            "genetic_forensic_portal.app.utils.validate_input_file.validate_input_file"
+        ),
+        pytest.raises(ValueError, match=client.MISSING_DATA_ERROR),
+    ):
         client.upload_sample_analysis(None)  # type: ignore[arg-type]
 
 
 def test_upload_no_metadata_returns_different_uuid():
-    response = client.upload_sample_analysis(TEST_FILE_DATA)
+    with mock.patch(
+        "genetic_forensic_portal.app.utils.validate_input_file.validate_input_file"
+    ):
+        response = client.upload_sample_analysis(TEST_FILE_DATA)
 
-    assert response == client.NO_METADATA_UUID
+        assert response == client.NO_METADATA_UUID
+
+
+def test_upload_file_raises_error():
+    with (
+        mock.patch(
+            "genetic_forensic_portal.app.utils.validate_input_file.validate_input_file"
+        ) as mock_validate_input_file,
+    ):
+        mock_validate_input_file.side_effect = ValueError(
+            HEADER_MUST_START_WITH_MATCHID
+        )
+        with pytest.raises(ValueError, match=HEADER_MUST_START_WITH_MATCHID):
+            client.upload_sample_analysis(TEST_FILE_DATA, TEST_METADATA)
 
 
 def test_upload_no_access_returns_error():

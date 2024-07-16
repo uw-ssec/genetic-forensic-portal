@@ -18,7 +18,10 @@ if st.session_state[AUTHENTICATED]:
         location = st.text_input("Location seized: ")
         submit_button = st.form_submit_button(label="Submit")
         if submit_button:
-            st.write("Sample uploaded successfully!")
-            st.write("metadata: ", location)
-            uuid = client.upload_sample_analysis(data=data, metadata=location)
-            st.write("Sample UUID: ", uuid)
+            try:
+                uuid = client.upload_sample_analysis(data=data, metadata=location)
+                st.write("Sample uploaded successfully!")
+                st.write("metadata: ", location)
+                st.write("Sample UUID: ", uuid)
+            except Exception as e:
+                st.write("Error uploading sample: ", e)

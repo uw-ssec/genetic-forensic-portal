@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 import logging
 from pathlib import Path
 
@@ -20,6 +21,7 @@ from genetic_forensic_portal.app.common.constants import (
     SAMPLE_UUID,
     USERNAME,
 )
+from genetic_forensic_portal.app.utils import validate_input_file
 from genetic_forensic_portal.utils.analysis_status import AnalysisStatus
 
 from . import keycloak_client as auth_client
@@ -65,7 +67,7 @@ FAMILIAL_SAMPLE_DATA_ERRORS = str(
 DEFAULT_LIST_PAGE_SIZE = 3
 
 
-def upload_sample_analysis(data: bytes, metadata: str | None = None) -> str:
+def upload_sample_analysis(data: io.BytesIO, metadata: str | None = None) -> str:
     """Uploads a sample analysis from the web portal to the API
 
     Args:
@@ -76,15 +78,18 @@ def upload_sample_analysis(data: bytes, metadata: str | None = None) -> str:
     if data is None:
         raise ValueError(MISSING_DATA_ERROR)
 
-    sample_identifier = SAMPLE_UUID
-
-    if metadata is None:
-        sample_identifier = NO_METADATA_UUID
-
     if not auth_client.check_create_access(
         st.session_state[USERNAME], st.session_state[ROLES]
     ):
         raise PermissionError(UPLOAD_DENIED_ERROR)
+
+    data_as_string = io.StringIO(data.getvalue().decode("utf-8"))
+    validate_input_file.validate_input_file(data_as_string)
+
+    sample_identifier = SAMPLE_UUID
+
+    if metadata is None:
+        sample_identifier = NO_METADATA_UUID
 
     return sample_identifier
 
