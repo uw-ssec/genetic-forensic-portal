@@ -53,7 +53,7 @@ First run the authentication application (Keycloak server) with the following
 command
 
 ```bash
-gf-auth-up
+gf-auth-run
 ```
 
 You are now ready to run the Genetic Forensic portal Streamlit application:
