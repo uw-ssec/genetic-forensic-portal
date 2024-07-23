@@ -13,6 +13,7 @@ repos:
     rev: "v4.6.0"
     hooks:
       - id: check-added-large-files
+        exclude: "^src/genetic_forensic_portal/resources/.*zip$"
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: check-symlinks
