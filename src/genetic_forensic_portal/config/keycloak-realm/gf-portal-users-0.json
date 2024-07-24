@@ -135,17 +135,17 @@
       "totp": false,
       "credentials": [
         {
-          "id": "37f5a440-b064-4ba1-bf79-2d338cf12d8c",
+          "id": "8bc90150-57c1-4564-8d3e-280de0fbd2db",
           "type": "password",
           "userLabel": "My password",
-          "createdDate": 1719355410641,
-          "secretData": "{\"value\":\"/YBnKKY3Y19BoaYufOBItC/L2kW1JxVl7bJgGsVnPoc=\",\"salt\":\"RT8tZhDOlh9yc9DeMyMz6Q==\",\"additionalParameters\":{}}",
+          "createdDate": 1721251719390,
+          "secretData": "{\"value\":\"CQO59mAub5xubut7EmPxw3NciH7kKLf/WERkv/vGHSQ=\",\"salt\":\"zy5aV/jdsshWg9CBCYUc5A==\",\"additionalParameters\":{}}",
           "credentialData": "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
         }
       ],
       "disableableCredentialTypes": [],
       "requiredActions": [],
-      "realmRoles": ["default-roles-gf-portal"],
+      "realmRoles": ["default-roles-gf-portal", "test-center"],
       "notBefore": 0,
       "groups": ["/test-center"]
     },
@@ -171,7 +171,7 @@
       ],
       "disableableCredentialTypes": [],
       "requiredActions": [],
-      "realmRoles": ["default-roles-gf-portal"],
+      "realmRoles": ["default-roles-gf-portal", "test-center"],
       "notBefore": 0,
       "groups": ["/test-center"]
     },

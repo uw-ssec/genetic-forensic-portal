@@ -33,6 +33,7 @@ keycloak_openid = KeycloakOpenID(
 
 
 TEST_CENTER = "test-center"
+TEST_CENTER_USER_2 = "test-center-2"
 CEFS = "cefs"
 ADMIN = "admin"
 TEST_USER_1 = "test1"
@@ -69,7 +70,14 @@ MOCK_RESOURCE_ACCESS_CONTROL = {
                 actions=[Action.VIEW, Action.DOWNLOAD],
             ),
         ],
-        user_permissions=[DENY_NO_ACCESS_USER],
+        user_permissions=[
+            DENY_NO_ACCESS_USER,
+            Permission(
+                entity="test-center-2",
+                effect=Effect.DENY,
+                actions=[Action.DOWNLOAD],
+            ),
+        ],
     ),
     NO_METADATA_UUID: AnalysisPermissions(
         analysis_owner=TEST_USER_1,

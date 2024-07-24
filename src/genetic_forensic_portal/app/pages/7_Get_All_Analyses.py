@@ -4,8 +4,9 @@ import streamlit as st
 
 import genetic_forensic_portal.app.utils.familial_analysis_utils as fam_utils
 from genetic_forensic_portal.app.client import gf_api_client as client
-from genetic_forensic_portal.app.common import setup
-from genetic_forensic_portal.app.common.constants import AUTHENTICATED
+from genetic_forensic_portal.app.client import keycloak_client as auth_client
+from genetic_forensic_portal.app.common import download_buttons, setup
+from genetic_forensic_portal.app.common.constants import AUTHENTICATED, ROLES, USERNAME
 
 st.title("Comprehensive Analysis Overview")
 
@@ -49,10 +50,16 @@ if st.session_state[AUTHENTICATED]:
         ):
             st.write("Familial Analysis")
             st.dataframe(
-                analysis_results.familial.style.applymap(
+                analysis_results.familial.style.map(
                     fam_utils.highlight_exact_matches,
                     subset=[fam_utils.EXACT_MATCH_COLUMN],
                 )
             )
         else:
             st.error("Familial Analysis not found")
+
+        if auth_client.check_download_access(
+            st.session_state[USERNAME], st.session_state[ROLES], uuid
+        ):
+            download_buttons.scat_analysis_download_button(uuid)
+            download_buttons.voronoi_analysis_download_button(uuid)

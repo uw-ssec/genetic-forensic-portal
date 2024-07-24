@@ -137,12 +137,60 @@ def test_get_scat_analysis_no_access_raises_error():
             return_value=False,
         ),
     ):
-        client.get_scat_analysis("not-an-uuid")
+        client.get_scat_analysis(client.SAMPLE_UUID)
 
 
 def test_get_scat_analysis_raises_error_for_none():
     with pytest.raises(ValueError, match=client.MISSING_UUID_ERROR):
         client.get_scat_analysis(None)  # type: ignore[arg-type]
+
+
+# SCAT Data Retrieval Analysis
+
+
+def test_get_scat_analysis_data_returns_image_path():
+    response = client.get_scat_analysis_data(client.SAMPLE_UUID)
+
+    assert response == client.SCAT_SAMPLE_DATA_PATH
+
+
+def test_get_scat_analysis_data_returns_image_path_in_progress_uiud():
+    response = client.get_scat_analysis_data(client.IN_PROGRESS_UUID)
+
+    assert response == client.SCAT_SAMPLE_DATA_PATH
+
+
+def test_get_scat_analysis_data_no_metadata_returns_different_image_path():
+    response = client.get_scat_analysis_data(client.NO_METADATA_UUID)
+
+    assert response == client.SCAT_SAMPLE_DATA_PATH_2
+
+
+def test_get_scat_analysis_data_raises_error():
+    with (
+        pytest.raises(FileNotFoundError),
+        mock.patch(
+            "genetic_forensic_portal.app.client.keycloak_client.check_download_access",
+            return_value=True,
+        ),
+    ):
+        client.get_scat_analysis_data("not-an-uuid")
+
+
+def test_get_scat_analysis_data_no_access_raises_error():
+    with (
+        pytest.raises(FileNotFoundError),
+        mock.patch(
+            "genetic_forensic_portal.app.client.keycloak_client.check_download_access",
+            return_value=False,
+        ),
+    ):
+        client.get_scat_analysis_data(client.SAMPLE_UUID)
+
+
+def test_get_scat_analysis_data_raises_error_for_none():
+    with pytest.raises(ValueError, match=client.MISSING_UUID_ERROR):
+        client.get_scat_analysis_data(None)  # type: ignore[arg-type]
 
 
 def test_list_all_analyses_returns_list():
@@ -231,12 +279,54 @@ def test_get_voronoi_analysis_no_access_raises_error():
             return_value=False,
         ),
     ):
-        client.get_voronoi_analysis("not-an-uuid")
+        client.get_voronoi_analysis(client.SAMPLE_UUID)
 
 
 def test_get_voronoi_analysis_raises_error_for_none():
     with pytest.raises(ValueError, match=client.MISSING_UUID_ERROR):
         client.get_voronoi_analysis(None)  # type: ignore[arg-type]
+
+
+# Voronoi Analysis Data
+
+
+def test_get_voronoi_analysis_data_returns_zip_path():
+    response = client.get_voronoi_analysis_data(client.SAMPLE_UUID)
+
+    assert response == client.VORONOI_SAMPLE_DATA_PATH
+
+
+def test_get_voronoi_analysis_data_no_metadata_returns_different_image_path():
+    response = client.get_voronoi_analysis_data(client.NO_METADATA_UUID)
+
+    assert response == client.VORONOI_SAMPLE_DATA_PATH_2
+
+
+def test_get_voronoi_analysis_data_raises_error():
+    with (
+        pytest.raises(FileNotFoundError),
+        mock.patch(
+            "genetic_forensic_portal.app.client.keycloak_client.check_download_access",
+            return_value=True,
+        ),
+    ):
+        client.get_voronoi_analysis_data("not-an-uuid")
+
+
+def test_get_voronoi_analysis_data_no_access_raises_error():
+    with (
+        pytest.raises(FileNotFoundError),
+        mock.patch(
+            "genetic_forensic_portal.app.client.keycloak_client.check_download_access",
+            return_value=False,
+        ),
+    ):
+        client.get_voronoi_analysis_data(client.SAMPLE_UUID)
+
+
+def test_get_voronoi_analysis_data_raises_error_for_none():
+    with pytest.raises(ValueError, match=client.MISSING_UUID_ERROR):
+        client.get_voronoi_analysis_data(None)  # type: ignore[arg-type]
 
 
 # Tests for the get_analysis_status function

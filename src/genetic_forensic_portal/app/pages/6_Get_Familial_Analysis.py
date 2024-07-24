@@ -27,7 +27,7 @@ if st.session_state[AUTHENTICATED]:
         try:
             analysis = client.get_familial_analysis(uuid)
             st.dataframe(
-                analysis.style.applymap(
+                analysis.style.map(
                     fam_utils.highlight_exact_matches,
                     subset=[fam_utils.EXACT_MATCH_COLUMN],
                 )

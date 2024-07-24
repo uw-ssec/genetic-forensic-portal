@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 MISSING_DATA_ERROR = "data is required"
 MISSING_UUID_ERROR = "uuid is required"
 UPLOAD_DENIED_ERROR = "User does not have permission to upload sample analysis"
+ANALYSIS_NOT_FOUND_ERROR = "Analysis not found"
 FAMILIAL_TSV_ERROR = (
     "Error reading familial matching results. Please contact system administrator."
 )
@@ -49,12 +50,16 @@ UUID_LIST = [
 SAMPLE_PATH = Path(__file__).parents[2] / "resources"  # equivalent to ../../resources
 
 SAMPLE_IMAGE_PATH = SAMPLE_PATH / "sample_images"
-SCAT_SAMPLE_IMAGE = str(SAMPLE_IMAGE_PATH / "tan001_scat.png")
-SCAT_SAMPLE_IMAGE_2 = str(SAMPLE_IMAGE_PATH / "tan002_scat.png")
+SCAT_SAMPLE_IMAGE = str(SAMPLE_IMAGE_PATH / "tst_07-16_0.7t_scat_median.png")
+SCAT_SAMPLE_DATA_PATH = str(SAMPLE_IMAGE_PATH / "tst_07-16_scat.zip")
+SCAT_SAMPLE_IMAGE_2 = str(SAMPLE_IMAGE_PATH / "tst2_07-17_0.7t_scat_median.png")
+SCAT_SAMPLE_DATA_PATH_2 = str(SAMPLE_IMAGE_PATH / "tst2_07-17_scat.zip")
 
 # Add Voronoi sample image paths
-VORONOI_SAMPLE_IMAGE = str(SAMPLE_IMAGE_PATH / "tan001_voronoi.png")
-VORONOI_SAMPLE_IMAGE_2 = str(SAMPLE_IMAGE_PATH / "tan002_voronoi.png")
+VORONOI_SAMPLE_IMAGE = str(SAMPLE_IMAGE_PATH / "tst_07-16_0.7t_voronoi_median.png")
+VORONOI_SAMPLE_DATA_PATH = str(SAMPLE_IMAGE_PATH / "tst_07-16_voronoi.zip")
+VORONOI_SAMPLE_IMAGE_2 = str(SAMPLE_IMAGE_PATH / "tst2_07-17_0.7t_voronoi_median.png")
+VORONOI_SAMPLE_DATA_PATH_2 = str(SAMPLE_IMAGE_PATH / "tst2_07-17_voronoi.zip")
 
 SAMPLE_DATA_PATH = SAMPLE_PATH / "sample_data"
 FAMILIAL_SAMPLE_DATA = str(SAMPLE_DATA_PATH / "sample_familial_matches.tsv")
@@ -108,7 +113,7 @@ def get_scat_analysis(sample_id: str) -> str:
     if not auth_client.check_view_access(
         st.session_state[USERNAME], st.session_state[ROLES], sample_id
     ):
-        raise FileNotFoundError
+        raise FileNotFoundError(ANALYSIS_NOT_FOUND_ERROR)
 
     analysis = None
 
@@ -120,9 +125,50 @@ def get_scat_analysis(sample_id: str) -> str:
         analysis = SCAT_SAMPLE_IMAGE  # This can be any image that represents an in-progress state
 
     if analysis is None:
-        raise FileNotFoundError
+        raise FileNotFoundError(ANALYSIS_NOT_FOUND_ERROR)
 
     return analysis
+
+
+def get_scat_analysis_data(sample_id: str) -> str:
+    """Gets the SCAT analysis data for a sample
+
+    Args:
+        sample_id (str): The sample ID to get the SCAT analysis data for"""
+    # This is a placeholder. Eventually, the real API call will be here
+    # and we can return its response
+
+    if sample_id is None:
+        raise ValueError(MISSING_UUID_ERROR)
+
+    if not auth_client.check_download_access(
+        st.session_state[USERNAME], st.session_state[ROLES], sample_id
+    ):
+        raise FileNotFoundError(ANALYSIS_NOT_FOUND_ERROR)
+
+    # This placeholder just returns the local file location of the data zip.
+    # In the real implementation, the data returned would probably live in
+    #    some sort of blob storage system -- like S3 or Azure Blob Storage.
+    # In that case, the actual API call would return a URL to the data with
+    #    particular, temporary access associated with it.
+    # With S3, this would be a pre-signed URL:
+    #    https://docs.aws.amazon.com/AmazonS3/latest/userguide/ShareObjectPreSignedURL.html
+    # With Azure Blob Storage, this would be an SAS token:
+    #    https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview
+
+    analysis_path = None
+
+    if sample_id == SAMPLE_UUID:
+        analysis_path = SCAT_SAMPLE_DATA_PATH
+    elif sample_id == NO_METADATA_UUID:
+        analysis_path = SCAT_SAMPLE_DATA_PATH_2
+    elif sample_id == IN_PROGRESS_UUID:
+        analysis_path = SCAT_SAMPLE_DATA_PATH
+
+    if analysis_path is None:
+        raise FileNotFoundError(ANALYSIS_NOT_FOUND_ERROR)
+
+    return analysis_path
 
 
 def get_voronoi_analysis(sample_id: str) -> str:
@@ -139,7 +185,7 @@ def get_voronoi_analysis(sample_id: str) -> str:
     if not auth_client.check_view_access(
         st.session_state[USERNAME], st.session_state[ROLES], sample_id
     ):
-        raise FileNotFoundError
+        raise FileNotFoundError(ANALYSIS_NOT_FOUND_ERROR)
 
     analysis = None
 
@@ -149,7 +195,46 @@ def get_voronoi_analysis(sample_id: str) -> str:
         analysis = VORONOI_SAMPLE_IMAGE_2
 
     if analysis is None:
-        raise FileNotFoundError
+        raise FileNotFoundError(ANALYSIS_NOT_FOUND_ERROR)
+
+    return analysis
+
+
+def get_voronoi_analysis_data(sample_id: str) -> str:
+    """Gets the Voronoi analysis data for a sample
+
+    Args:
+        sample_id (str): The sample ID to get the Voronoi analysis for"""
+    # This is a placeholder. Eventually, the real API call will be here
+    # and we can return its response
+
+    if sample_id is None:
+        raise ValueError(MISSING_UUID_ERROR)
+
+    if not auth_client.check_download_access(
+        st.session_state[USERNAME], st.session_state[ROLES], sample_id
+    ):
+        raise FileNotFoundError(ANALYSIS_NOT_FOUND_ERROR)
+
+    # This placeholder just returns the local file location of the data zip.
+    # In the real implementation, the data returned would probably live in
+    #    some sort of blob storage system -- like S3 or Azure Blob Storage.
+    # In that case, the actual API call would return a URL to the data with
+    #    particular, temporary access associated with it.
+    # With S3, this would be a pre-signed URL:
+    #    https://docs.aws.amazon.com/AmazonS3/latest/userguide/ShareObjectPreSignedURL.html
+    # With Azure Blob Storage, this would be an SAS token:
+    #    https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview
+
+    analysis = None
+
+    if sample_id == SAMPLE_UUID:
+        analysis = VORONOI_SAMPLE_DATA_PATH
+    elif sample_id == NO_METADATA_UUID:
+        analysis = VORONOI_SAMPLE_DATA_PATH_2
+
+    if analysis is None:
+        raise FileNotFoundError(ANALYSIS_NOT_FOUND_ERROR)
 
     return analysis
 
@@ -168,7 +253,7 @@ def get_familial_analysis(sample_id: str) -> pd.DataFrame:
     if not auth_client.check_view_access(
         st.session_state[USERNAME], st.session_state[ROLES], sample_id
     ):
-        raise FileNotFoundError
+        raise FileNotFoundError(ANALYSIS_NOT_FOUND_ERROR)
 
     analysis_path = None
 
@@ -180,7 +265,7 @@ def get_familial_analysis(sample_id: str) -> pd.DataFrame:
         analysis_path = FAMILIAL_SAMPLE_DATA_ERRORS
 
     if analysis_path is None:
-        raise FileNotFoundError
+        raise FileNotFoundError(ANALYSIS_NOT_FOUND_ERROR)
 
     try:
         return pd.read_csv(analysis_path, sep="\t", skiprows=1)
@@ -265,8 +350,7 @@ def get_analysis_status(sample_id: str) -> AnalysisStatus:
     if not auth_client.check_view_access(
         st.session_state[USERNAME], st.session_state[ROLES], sample_id
     ):
-        error_message = "No analysis found for the given UUID"
-        raise FileNotFoundError
+        raise FileNotFoundError(ANALYSIS_NOT_FOUND_ERROR)
 
     if sample_id in [SAMPLE_UUID, NO_METADATA_UUID]:
         return AnalysisStatus.ANALYSIS_SUCCEEDED
@@ -275,8 +359,7 @@ def get_analysis_status(sample_id: str) -> AnalysisStatus:
     if sample_id == ANALYSIS_FAILED_UUID:
         return AnalysisStatus.ANALYSIS_FAILED
 
-    error_message = "No analysis found for the given UUID"
-    raise FileNotFoundError(error_message)
+    raise FileNotFoundError(ANALYSIS_NOT_FOUND_ERROR)
 
 
 def get_all_analyses(sample_id: str) -> GetAnalysesResponse:
