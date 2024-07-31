@@ -1,3 +1,8 @@
+"""This module contains the client-side logic for interfacing with a (currently non-existent) Genetic Forensic API.
+
+The functions in this module are placeholders for the real API calls that will be made in the future. They are designed to mimic the behavior of the real API calls, but with hard-coded responses. These modules have been designed in such a way that the real API calls can be easily swapped in when they are available. These functions also hook into a local client to check for user permissions before \"calling\" the API.
+"""
+
 from __future__ import annotations
 
 import io
@@ -7,6 +12,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
+from genetic_forensic_portal.app.client.models.analysis_status import AnalysisStatus
 from genetic_forensic_portal.app.client.models.get_analyses_response import (
     GetAnalysesResponse,
 )
@@ -22,7 +28,6 @@ from genetic_forensic_portal.app.common.constants import (
     USERNAME,
 )
 from genetic_forensic_portal.app.utils import validate_input_file
-from genetic_forensic_portal.utils.analysis_status import AnalysisStatus
 
 from . import keycloak_client as auth_client
 from .models.list_analyses_response import ListAnalysesResponse

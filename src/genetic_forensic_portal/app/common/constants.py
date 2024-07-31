@@ -1,3 +1,10 @@
+"""Contains constants used throughout the application.
+
+Types of constants found in this module:
+- Authentication session state keys
+- Sample, canned analysis \"UUID\"s used for testing
+"""
+
 # Authentication
 
 AUTHENTICATED = "authenticated"

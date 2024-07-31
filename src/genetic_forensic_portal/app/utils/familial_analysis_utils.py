@@ -1,3 +1,5 @@
+"""Contains utility functions for displaying familial analysis results."""
+
 from __future__ import annotations
 
 import typing

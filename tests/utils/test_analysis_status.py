@@ -1,4 +1,4 @@
-from genetic_forensic_portal.utils.analysis_status import AnalysisStatus
+from genetic_forensic_portal.app.client.models.analysis_status import AnalysisStatus
 
 
 def test_ordering():

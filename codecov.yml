@@ -1,3 +1,9 @@
 ignore:
+  # Ignore CLI files
   - "src/genetic_forensic_portal/auth.py"
   - "src/genetic_forensic_portal/cli.py"
+  # Ignore streamlit files
+  - "src/genetic_forensic_portal/app/common/setup.py"
+  - "src/genetic_forensic_portal/app/common/download_buttons.py"
+  - "src/genetic_forensic_portal/app/Home.py"
+  - "src/genetic_forensic_portal/app/pages/*"

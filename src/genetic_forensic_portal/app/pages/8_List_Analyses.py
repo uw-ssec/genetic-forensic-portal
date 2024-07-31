@@ -3,9 +3,9 @@ from __future__ import annotations
 import streamlit as st
 
 from genetic_forensic_portal.app.client import gf_api_client as client
+from genetic_forensic_portal.app.client.models.analysis_status import AnalysisStatus
 from genetic_forensic_portal.app.common import setup
 from genetic_forensic_portal.app.common.constants import AUTHENTICATED
-from genetic_forensic_portal.utils.analysis_status import AnalysisStatus
 
 
 def try_get_analysis(uuid: str) -> AnalysisStatus:

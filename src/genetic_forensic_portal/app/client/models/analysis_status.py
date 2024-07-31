@@ -5,6 +5,18 @@ from enum import StrEnum
 
 
 class AnalysisStatus(StrEnum):
+    """The model for the lifecycle status of an analysis.
+
+    Also includes some additional logic to allow statuses to be ordered.
+
+    The imposed order is:
+    - ANALYSIS_SUCCEEDED
+    - ANALYSIS_IN_PROGRESS
+    - ANALYSIS_FAILED
+    - ANALYSIS_NOT_FOUND
+    - ANALYSIS_ERROR
+    """
+
     ANALYSIS_SUCCEEDED = "Analysis succeeded"
     ANALYSIS_IN_PROGRESS = "Analysis in progress"
     ANALYSIS_FAILED = "Analysis failed"

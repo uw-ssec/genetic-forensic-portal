@@ -1,3 +1,5 @@
+"""Contains Streamlit buttons for downloading files while handling auth decisions. Contained here because it is used in multiple places."""
+
 from __future__ import annotations
 
 import logging
@@ -12,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def scat_analysis_download_button(uuid: str) -> None:
+    """Create a download button for SCAT analysis data."""
     try:
         analysis_data_path = client.get_scat_analysis_data(uuid)
         if analysis_data_path:
@@ -32,6 +35,7 @@ def scat_analysis_download_button(uuid: str) -> None:
 
 
 def voronoi_analysis_download_button(uuid: str) -> None:
+    """Create a download button for Voronoi analysis data."""
     try:
         analysis_data_path = client.get_voronoi_analysis_data(uuid)
         if analysis_data_path:

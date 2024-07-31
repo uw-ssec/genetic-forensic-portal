@@ -99,7 +99,7 @@ def build_api_docs(session: nox.Session) -> None:
         "--module-first",
         "--no-toc",
         "--force",
-        "../src/genetic_forensic_portal",
+        "../src/genetic_forensic_portal/",
     )
 
 

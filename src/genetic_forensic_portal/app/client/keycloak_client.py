@@ -1,3 +1,12 @@
+"""This module contains real methods to log into a locally running Keycloak server and, using the returned token, get the roles of a user.
+
+It also contains mock methods to simulate authorization decisions based on the roles of a user and the permissions of a resource. A chart of the permissions simulated herein can be found in the <project root>/docs/test-users.md file.
+
+Basically, authentication (authN) is real, authorization (authZ) is mocked.
+
+Before going to production, this module should be replaced with a real and robust authN/authZ system.
+"""
+
 from __future__ import annotations
 
 import os
@@ -209,20 +218,46 @@ MOCK_USER_AUTH_CACHE: dict[str, dict[Action, bool | None]] = {}
 
 
 def login_user(username: str, password: str) -> Any:
+    """Log in a user and return the token
+
+    Args:
+        username (str): username of the user
+        password (str): password of the user
+    """
     return keycloak_openid.token(username, password)
 
 
 def get_user_roles(token: dict[Any, Any]) -> Any:
+    """Get the roles of a user
+
+    Args:
+        token (dict): user's token previously obtained by calling login_user
+    """
     return keycloak_openid.introspect(token["access_token"])["realm_access"]["roles"]
 
 
 def logout_user(token: dict[Any, Any]) -> None:
+    """Logs out a user
+
+    Args:
+        token (dict): user's token previously obtained by calling login_user
+    """
     keycloak_openid.logout(token["refresh_token"])
 
 
 def update_auth_cache(
     analysis_id: str, user: str, action: Action, decision: bool
 ) -> None:
+    """Updates a (simulated) local cache that maps user, action, and analysis_id to a boolean access decision.
+
+    This allows us to avoid calling the \"auth server\" multiple times for the same user, action, and analysis_id.
+
+    Args:
+        analysis_id (str): the analysis_id of the resource
+        user (str): the user requesting access
+        action (Action): the action the user is trying to perform
+        decision (bool): the computed auth decision for this analysis_id, user, and action
+    """
     if analysis_id not in MOCK_RESOURCE_AUTH_CACHE:
         MOCK_RESOURCE_AUTH_CACHE[analysis_id] = {}
 
@@ -233,6 +268,18 @@ def update_auth_cache(
 
 
 def check_user_access(user: str, roles: list[str], action: Action) -> bool | None:
+    """Check if a user has access to a specific action.
+
+    Returns None if the user has not been explicitly allowed or denied the action. Ultimate auth decisions can change based on the absence of those explicit allows/denies, which is why it's a type we can return.
+
+    Args:
+        user (str): the user requesting access
+        roles (list[str]): the roles of the user
+        action (Action): the action the user is trying to perform
+
+    Returns:
+        bool | None: the computed auth decision for this user and action
+    """
     # check if the decision has been "cached"
     if user in MOCK_USER_AUTH_CACHE and action in MOCK_USER_AUTH_CACHE[user]:
         return MOCK_USER_AUTH_CACHE[user][action]
@@ -265,6 +312,19 @@ def check_user_access(user: str, roles: list[str], action: Action) -> bool | Non
 def check_resource_access(
     user: str, roles: list[str], action: Action, analysis_id: str
 ) -> bool:
+    """Check if a user has access to a specific action on a specific resource.
+
+    Returns False if no permissions have been specified for the user, action, and resource.
+
+    Args:
+        user (str): the user requesting access
+        roles (list[str]): the roles of the user
+        action (Action): the action the user is trying to perform
+        analysis_id (str): the analysis_id of the resource
+
+    Returns:
+        bool: the computed auth decision for this user, action, and analysis_id
+    """
     # check if the decision has been "cached"
     if (
         analysis_id in MOCK_RESOURCE_AUTH_CACHE
@@ -311,6 +371,13 @@ def check_resource_access(
 
 
 def check_view_access(user: str, roles: list[str], analysis_id: str) -> bool:
+    """Check if a user has access to view a specific resource.
+
+    Args:
+        user (str): the user requesting access
+        roles (list[str]): the roles of the user
+        analysis_id (str): the analysis_id of the resource
+    """
     resource_access = check_resource_access(user, roles, Action.VIEW, analysis_id)
     user_access = check_user_access(user, roles, Action.VIEW)
 
@@ -318,6 +385,13 @@ def check_view_access(user: str, roles: list[str], analysis_id: str) -> bool:
 
 
 def check_download_access(user: str, roles: list[str], analysis_id: str) -> bool:
+    """Check if a user has access to download a specific resource.
+
+    Args:
+        user (str): the user requesting access
+        roles (list[str]): the roles of the user
+        analysis_id (str): the analysis_id of the resource
+    """
     resource_access = check_resource_access(user, roles, Action.DOWNLOAD, analysis_id)
     user_access = check_user_access(user, roles, Action.DOWNLOAD)
 
@@ -325,6 +399,12 @@ def check_download_access(user: str, roles: list[str], analysis_id: str) -> bool
 
 
 def check_create_access(user: str, roles: list[str]) -> bool:
+    """Check if a user has access to create a resource.
+
+    Args:
+        user (str): the user requesting access
+        roles (list[str]): the roles of the user
+    """
     user_access = check_user_access(user, roles, Action.CREATE)
     if user_access is not None:
         return user_access
@@ -332,6 +412,12 @@ def check_create_access(user: str, roles: list[str]) -> bool:
 
 
 def check_list_all_access(user: str, roles: list[str]) -> bool:
+    """Check if a user has access to list all resources.
+
+    Args:
+        user (str): the user requesting access
+        roles (list[str]): the roles of the user
+    """
     user_access = check_user_access(user, roles, Action.LIST_ALL)
     if user_access is not None:
         return user_access

@@ -1,3 +1,7 @@
+"""Contains utility functions for validating that user-uploaded TSV files are in the correct format that can be processed.
+
+This file originally from Mary (mkkuhner) @ UW's Center for Environmental Forensic Science"""
+
 # This file originally from Mary (mkkuhner) @ UW's Center for Environmental Forensic Science
 
 import io
@@ -43,10 +47,16 @@ logger = logging.getLogger(__name__)
 
 
 def report_error(lineno: str | int, error: str) -> None:
+    """Raise an error with a line number and error message."""
     raise ValueError(ERROR_TEMPLATE.format(lineno=lineno, error=error))
 
 
 def legal_msat_value(msat: str | int) -> bool:
+    """Converts an expected microsatellite value from a string to an int and check if said int is within the expected range (or -999).
+
+    Args:
+        msat (str | int): The microsatellite value to check.
+    """
     try:
         msat = int(msat)
     except ValueError:
@@ -57,6 +67,19 @@ def legal_msat_value(msat: str | int) -> bool:
 
 
 def validate_input_file(infile: io.StringIO) -> None:
+    """Check that the input file is legal.
+
+    That is to say, check the following:
+    - The header starts with "MatchID"
+    - The header contains the correct number of microsatellites
+    - The header contains the correct microsatellites
+    - Each line contains the correct number of microsatellites
+    - Each microsatellite value is legal
+    - Each SID (sample ID) is present exactly twice
+
+    Args:
+        infile (io.StringIO): The input file to check.
+    """
     # read input file
     headerline = infile.readline()
     datalines = infile.readlines()

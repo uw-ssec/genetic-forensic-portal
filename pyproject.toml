@@ -28,7 +28,7 @@ classifiers = [
 ]
 dynamic = ["version"]
 dependencies = [
-  "streamlit>=1.36,<2",
+  "streamlit>=1.37,<2",
   "pandas>=2.2,<3",
   "python-keycloak>=4.1,<5",
 ]
@@ -41,6 +41,8 @@ gf-auth-dev-export-DO-NOT-RUN-IN-PROD = "genetic_forensic_portal.auth:export"
 
 [project.optional-dependencies]
 dev = [
+  "nox",
+  "pre-commit",
   "pytest >=6",
   "pytest-cov >=3",
   "pytest-mock",
@@ -88,7 +90,14 @@ testpaths = [
 [tool.coverage]
 run.source = ["genetic_forensic_portal"]
 run.omit = [
+  # Omit CLI files
   "src/genetic_forensic_portal/auth.py",
+  "src/genetic_forensic_portal/cli.py",
+  # Omit Streamlit files
+  "src/genetic_forensic_portal/app/common/setup.py",
+  "src/genetic_forensic_portal/app/common/download_buttons.py",
+  "src/genetic_forensic_portal/app/Home.py",
+  "src/genetic_forensic_portal/app/pages/*",
 ]
 report.exclude_also = [
   '\.\.\.',

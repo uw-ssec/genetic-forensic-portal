@@ -8,6 +8,7 @@ import pytest
 import streamlit
 
 import genetic_forensic_portal.app.client.gf_api_client as client
+from genetic_forensic_portal.app.client.models.analysis_status import AnalysisStatus
 from genetic_forensic_portal.app.client.models.get_analyses_response import (
     GetAnalysesResponse,
 )
@@ -24,7 +25,6 @@ from genetic_forensic_portal.app.common.constants import (
 from genetic_forensic_portal.app.utils.validate_input_file import (
     HEADER_MUST_START_WITH_MATCHID,
 )
-from genetic_forensic_portal.utils.analysis_status import AnalysisStatus
 
 TEST_FILE_DATA = io.BytesIO(b"this is a file")
 TEST_METADATA = "this is metadata"

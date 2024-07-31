@@ -3,6 +3,10 @@
 ```{toctree}
 :maxdepth: 2
 :hidden:
+:caption: API
+
+api/genetic_forensic_portal
+test-users
 
 ```
 

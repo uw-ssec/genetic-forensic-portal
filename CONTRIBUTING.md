@@ -14,26 +14,44 @@ project.
 
 ### Environment Setup
 
+#### Codespaces Environment Setup
+
+To open a [GitHub Codespace](https://github.com/features/codespaces) where you
+can run and develop the portal, you can click the button below to do so, or by
+following GitHub's guide on how to do so
+[here](https://docs.github.com/en/codespaces/developing-in-a-codespace/creating-a-codespace-for-a-repository).
+
+It may take a few minutes to get up and running, but once it's ready, you can
+skip ahead to the section **Run Genetic Forensic Portal**.
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/uw-ssec/genetic-forensic-portal?quickstart=1)
+
+This option is especially good for Windows users, as the current scripts to run
+the local Keycloak client are intended for Unix-based operating systems
+(Mac/Linux), and Codespaces can easily provide you with such an environment.
+
+#### Local Environment Setup
+
 Fork the repository, and create your local version, then follow the installation
 steps:
 
 1. Create conda environment
 
-```bash
-conda create -y -n genetic-forensics python=3.12 pip
-```
+   ```bash
+   conda create -y -n genetic-forensics python=3.12 pip
+   ```
 
 2. Activate conda environment
 
-```bash
-conda activate genetic-forensics
-```
+   ```bash
+   conda activate genetic-forensics
+   ```
 
 3. Install dependencies
 
-```bash
-pip install -e ".[dev,docs]"
-```
+   ```bash
+   pip install -e ".[all]"
+   ```
 
 ### Post setup
 
@@ -47,7 +65,7 @@ pre-commit install # Will install a pre-commit hook into the git repo
 NOTE: You can also/alternatively run `pre-commit run` (changes only) or
 `pre-commit run --all-files` to check even without installing the hook.
 
-## Run Genetic Forensic portal
+### Run Genetic Forensic portal
 
 First run the authentication application (Keycloak server) with the following
 command
@@ -62,7 +80,7 @@ You are now ready to run the Genetic Forensic portal Streamlit application:
 gf-portal
 ```
 
-## Stopping the auth portal
+### Stopping the auth portal
 
 To stop the auth portal, run the following command:
 
@@ -70,7 +88,7 @@ To stop the auth portal, run the following command:
 gf-auth-stop
 ```
 
-## DO NOT RUN IN PROD: Exporting a list of DEV users from the DEV auth server
+### DO NOT RUN IN PROD: Exporting a list of DEV users from the DEV auth server
 
 To update the Keycloak realm containing the dev users, you can run the following
 command. Do not export your actual production users this way, as you do NOT want
@@ -94,6 +112,47 @@ Unit tests with coverage:
 
 ```bash
 pytest --cov=genetic_forensic_portal tests/ --cov-report xml:coverage.xml
+```
+
+## Developing with nox
+
+The fastest way to start with development is to use nox, which will be installed
+as part of the `dev` environment that you have already set up.
+
+To use, run `nox`. This will lint and test using every installed version of
+Python on your system, skipping ones that are not installed. You can also run
+specific jobs:
+
+```console
+$ nox -s lint  # Lint only
+$ nox -s tests  # Python tests
+$ nox -s build_api_docs # Build the API docs from docstrings
+$ nox -s docs -- --serve  # Build and serve the docs
+$ nox -s build  # Make an SDist and wheel
+```
+
+Nox handles everything for you, including setting up an temporary virtual
+environment for each run.
+
+## Building docs
+
+Build the API docs using the command below. This will generate the API
+documentation, which are retrieved from the docstrings in the code.:
+
+```bash
+nox -s build_api_docs
+```
+
+You can see a preview with:
+
+```bash
+nox -s docs -- --serve
+```
+
+You can build the docs to html using:
+
+```bash
+nox -s docs
 ```
 
 ## Pull Requests
